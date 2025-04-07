@@ -1,15 +1,15 @@
-const targetDate = new Date("2025-06-01T00:00:00").getTime();
+// The End Of Year Date To Countdown Date
 
-const timer = setInterval(function () {
-  const now = new Date().getTime();
-  const distance = targetDate - now;
-  const days = Math.floor(distance / (1000 * 60 * 60 * 24));
+document.addEventListener('DOMContentLoaded', () => {
+  // Unix timestamp (in seconds) to count down to
+  var toDayFromNow = (new Date("Dec 31, 2025 23:59:59").getTime() / 1000) + (3600 / 60 / 60 / 24) - 1;
+  // Set Up FlipDown
+  var flipdown = new FlipDown(toDayFromNow)
 
-  document.getElementById("timer").innerHTML = days > 0
-    ? `${days} day${days !== 1 ? 's' : ''} to go`
-    : "🎬 Launched!";
-
-  if (distance < 0) {
-    clearInterval(timer);
-  }
-}, 1000);
+  // Start The Count Down
+  .start()
+  // Do Something When The Countdown Ends
+  .ifEnded(() => {
+      document.querySelector(".flipdown").innerHTML = `<h2>Timer is ended</h2>`;
+  });
+});
