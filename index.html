@@ -4,11 +4,11 @@
   <title>Launch Date</title>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  
+
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
   
-  <!-- FlipDown CSS from CDN -->
+  <!-- FlipDown CSS -->
   <link rel="stylesheet" href="https://unpkg.com/flipdown@0.3.2/dist/flipdown.css" />
 
   <style>
@@ -20,6 +20,7 @@
       justify-content: center;
       align-items: center;
       height: 100vh;
+      flex-direction: column;
     }
     .count-down {
       text-align: center;
@@ -29,25 +30,69 @@
       font-size: 2rem;
       margin-bottom: 20px;
     }
+    form {
+      margin-bottom: 30px;
+    }
+    input[type="datetime-local"] {
+      padding: 8px;
+      font-size: 1rem;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+    button {
+      padding: 8px 16px;
+      font-size: 1rem;
+      margin-left: 10px;
+      border: none;
+      border-radius: 4px;
+      background-color: #333;
+      color: white;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
   <div class="count-down">
-    <h1>Launch Date</h1>
+    <h1>Set Your Countdown</h1>
+    <form id="dateForm">
+      <input type="datetime-local" id="userDate" required>
+      <button type="submit">Start Countdown</button>
+    </form>
     <div id="flipdown" class="flipdown"></div>
   </div>
 
-  <!-- FlipDown JS from CDN -->
+  <!-- FlipDown JS -->
   <script src="https://unpkg.com/flipdown@0.3.2/dist/flipdown.min.js"></script>
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const endTime = new Date("Dec 31, 2025 23:59:59").getTime() / 1000;
-      new FlipDown(endTime)
+    let flipdown;
+
+    function startCountdown(unixTime) {
+      // Remove existing countdown if it exists
+      document.getElementById('flipdown').innerHTML = '';
+      
+      // Start new countdown
+      flipdown = new FlipDown(unixTime, 'flipdown')
         .start()
         .ifEnded(() => {
-          document.querySelector(".flipdown").innerHTML = `<h2>Timer is ended</h2>`;
+          document.getElementById("flipdown").innerHTML = `<h2>Timer is ended</h2>`;
         });
+    }
+
+    document.getElementById('dateForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const userInput = document.getElementById('userDate').value;
+      const unixTime = new Date(userInput).getTime() / 1000;
+
+      if (!isNaN(unixTime) && unixTime > Date.now() / 1000) {
+        startCountdown(unixTime);
+      } else {
+        alert("Please choose a future date and time.");
+      }
     });
+
+    // Optional: Load a default countdown initially
+    const defaultTime = new Date("Dec 31, 2025 23:59:59").getTime() / 1000;
+    startCountdown(defaultTime);
   </script>
 </body>
 </html>
