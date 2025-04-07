@@ -1,32 +1,53 @@
+<!DOCTYPE html>
 <html lang="en">
-    <head>
-        <title>Launch Date</title>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <!-- Google Fonts -->
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@500;600;700&family=Open+Sans&display=swap"
-            rel="stylesheet">
-        <!-- Style Flipdown -->
-        <link href="https://pbutcher.uk/flipdown/css/flipdown/flipdown.css" rel="stylesheet" />
-        <!-- Font Awesome -->
-        <link href="https://use.fontawesome.com/releases/v5.3.1/css/all.css" rel="stylesheet" />
-        <!-- ALL MIN CSS -->
-        <link rel="stylesheet" href="assets/css/all.min.css">
-        <!-- File Normalization -->
-        <link rel="stylesheet" href="assets/css/normalize.css">
-        <!-- Import CSS Files -->
-        <link rel="stylesheet" href="assets/css/style.css">
-    </head>
-    <body>
-        <div class="count-down">
-            <h1>Launch Date</h1>
-            <div class="flipdown" id="flipdown"></div>
-        </div>
-        
-        <!-- Scripts -->
-        <script src="https://pbutcher.uk/flipdown/js/flipdown/flipdown.js"></script>
-        <script src="vendor/js/main.js"></script>
-    </body>
+<head>
+  <title>Launch Date</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
+  
+  <!-- FlipDown CSS from CDN -->
+  <link rel="stylesheet" href="https://unpkg.com/flipdown@0.3.2/dist/flipdown.css" />
+
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background-color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+    }
+    .count-down {
+      text-align: center;
+    }
+    h1 {
+      font-weight: 600;
+      font-size: 2rem;
+      margin-bottom: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="count-down">
+    <h1>Launch Date</h1>
+    <div id="flipdown" class="flipdown"></div>
+  </div>
+
+  <!-- FlipDown JS from CDN -->
+  <script src="https://unpkg.com/flipdown@0.3.2/dist/flipdown.min.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      const endTime = new Date("Dec 31, 2025 23:59:59").getTime() / 1000;
+      new FlipDown(endTime)
+        .start()
+        .ifEnded(() => {
+          document.querySelector(".flipdown").innerHTML = `<h2>Timer is ended</h2>`;
+        });
+    });
+  </script>
+</body>
 </html>
