@@ -1,115 +1,60 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-  <title>Launch Date</title>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<script>
+  let flipdown;
 
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
-  
-  <!-- FlipDown CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/flipdown@0.3.2/dist/flipdown.css" />
-
-  <style>
-    body {
-      margin: 0;
-      font-family: 'Poppins', sans-serif;
-      background-color: white;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      height: 100vh;
-      flex-direction: column;
-    }
-    .count-down {
-      text-align: center;
-    }
-    h1 {
-      font-weight: 600;
-      font-size: 2rem;
-      margin-bottom: 20px;
-    }
-    form {
-      margin-bottom: 30px;
-    }
-    input[type="datetime-local"] {
-      padding: 8px;
-      font-size: 1rem;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-    }
-    button {
-      padding: 8px 16px;
-      font-size: 1rem;
-      margin-left: 10px;
-      border: none;
-      border-radius: 4px;
-      background-color: #333;
-      color: white;
-      cursor: pointer;
-    }
-    .flipdown {
-    display: inline-flex !important;
-    flex-wrap: nowrap !important;
-    justify-content: center;
-    align-items: center;
-    transform: scale(0.85);
+  function toggleUI(showForm) {
+    document.getElementById('dateForm').style.display = showForm ? 'block' : 'none';
+    document.getElementById('resetBtn').style.display = showForm ? 'none' : 'inline-block';
   }
 
-  .flipdown .rotor-group {
-    margin: 0 5px;
-    min-width: 70px;
-    flex: none;
+  function startCountdown(unixTime) {
+    document.getElementById('flipdown').innerHTML = '';
+    toggleUI(false); // Hide form, show reset
+
+    flipdown = new FlipDown(unixTime, 'flipdown')
+      .start()
+      .ifEnded(() => {
+        document.getElementById("flipdown").innerHTML = `<h2>Timer is ended</h2>`;
+      });
   }
 
-  .flipdown .rotor-group:last-child {
-    margin-right: 0;
-  }
-  </style>
-</head>
-<body>
-  <div class="count-down">
-    <h1>Launch Date</h1>
-    <form id="dateForm">
-      <input type="datetime-local" id="userDate" required>
-      <button type="submit">Start Countdown</button>
-    </form>
-    <div id="flipdown" class="flipdown"></div>
-  </div>
+  document.addEventListener('DOMContentLoaded', () => {
+    const savedDate = localStorage.getItem('countdownDate');
+    const form = document.getElementById('dateForm');
+    const input = document.getElementById('userDate');
+    const resetBtn = document.getElementById('resetBtn');
 
-  <!-- FlipDown JS -->
-  <script src="https://unpkg.com/flipdown@0.3.2/dist/flipdown.min.js"></script>
-  <script>
-    let flipdown;
-
-    function startCountdown(unixTime) {
-      // Remove existing countdown if it exists
-      document.getElementById('flipdown').innerHTML = '';
-      
-      // Start new countdown
-      flipdown = new FlipDown(unixTime, 'flipdown')
-        .start()
-        .ifEnded(() => {
-          document.getElementById("flipdown").innerHTML = `<h2>Timer is ended</h2>`;
-        });
-    }
-
-    document.getElementById('dateForm').addEventListener('submit', function(e) {
+    form.addEventListener('submit', function(e) {
       e.preventDefault();
-      const userInput = document.getElementById('userDate').value;
-      const unixTime = new Date(userInput).getTime() / 1000;
+      const userInput = input.value;
+      const dateObj = new Date(userInput);
+      const unixTime = dateObj.getTime() / 1000;
 
       if (!isNaN(unixTime) && unixTime > Date.now() / 1000) {
+        localStorage.setItem('countdownDate', userInput);
         startCountdown(unixTime);
       } else {
-        alert("Please choose a future date and time.");
+        alert("Please choose a valid future date and time.");
       }
     });
 
-    // Optional: Load a default countdown initially
-    const defaultTime = new Date("Dec 31, 2025 23:59:59").getTime() / 1000;
-    startCountdown(defaultTime);
-  </script>
-</body>
-</html>
+    resetBtn.addEventListener('click', () => {
+      localStorage.removeItem('countdownDate');
+      toggleUI(true); // Show form again
+      document.getElementById('flipdown').innerHTML = '';
+    });
+
+    if (savedDate) {
+      const savedUnix = new Date(savedDate).getTime() / 1000;
+      if (!isNaN(savedUnix) && savedUnix > Date.now() / 1000) {
+        input.value = savedDate; // Prefill input
+        startCountdown(savedUnix);
+        return;
+      } else {
+        localStorage.removeItem('countdownDate');
+      }
+    }
+
+    // If no saved date, show form
+    toggleUI(true);
+  });
+</script>
