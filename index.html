@@ -12,6 +12,7 @@
   <link rel="stylesheet" href="https://unpkg.com/flipdown@0.3.2/dist/flipdown.css" />
 
   <style>
+    /* Base styles - Light Mode by default */
     body {
       margin: 0;
       font-family: 'Poppins', sans-serif;
@@ -28,15 +29,14 @@
       transition: background-color 0.3s ease, color 0.3s ease;
     }
 
-    h1 {
+    h1, h2 {
       font-weight: 600;
-      font-size: 2rem;
-      margin-bottom: 20px;
       transition: color 0.3s ease;
     }
 
-    h2 {
-      transition: color 0.3s ease;
+    h1 {
+      font-size: 2rem;
+      margin-bottom: 20px;
     }
 
     form {
@@ -48,6 +48,8 @@
       font-size: 1rem;
       border: 1px solid #ccc;
       border-radius: 4px;
+      background-color: white;
+      color: black;
       transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease;
     }
 
@@ -68,7 +70,6 @@
       margin-top: 10px;
     }
 
-    /* Keep FlipDown on one line */
     .flipdown {
       display: inline-flex !important;
       flex-wrap: nowrap !important;
@@ -101,7 +102,7 @@
       }
     }
 
-    /* Dark mode styles */
+    /* Dark mode support only when system prefers it */
     @media (prefers-color-scheme: dark) {
       body {
         background-color: #1e1e1e;
@@ -126,7 +127,7 @@
   </style>
 </head>
 <body>
-  <h1>Launch Date</h1>
+  <h1>Set Your Countdown</h1>
 
   <form id="dateForm">
     <input type="datetime-local" id="userDate" placeholder="YYYY-MM-DDTHH:MM" required />
@@ -155,7 +156,7 @@
       flipdown = new FlipDown(unixTime, 'flipdown')
         .start()
         .ifEnded(() => {
-          document.getElementById("flipdown").innerHTML = `<h2>Film is released!</h2>`;
+          document.getElementById("flipdown").innerHTML = `<h2>Timer is ended</h2>`;
         });
     }
 
