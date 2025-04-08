@@ -18,7 +18,7 @@
       --btn-bg-light: #333;
       --btn-text-light: white;
 
-      --bg-dark: #191919;
+      --bg-dark: #191919; /* Match Notion dark */
       --text-dark: white;
       --input-bg-dark: #333;
       --input-border-dark: #555;
@@ -128,14 +128,14 @@
     }
 
     body.dark .flipdown {
-      background-color: #191919; /* Match Notion dark mode */
+      background-color: #191919;
       filter: invert(1) hue-rotate(180deg);
     }
 
     body.dark .flipdown .rotor,
     body.dark .flipdown .rotor-top,
     body.dark .flipdown .rotor-bottom {
-      background-color: #333 !important;
+      background-color: #2a2a2a !important;
       color: white !important;
       border-color: #555 !important;
     }
@@ -202,7 +202,6 @@
       applyTheme(newTheme);
     });
 
-    // INIT theme based on localStorage or system
     const savedTheme = localStorage.getItem("theme");
     if (savedTheme) {
       applyTheme(savedTheme);
@@ -220,16 +219,28 @@
 
       form.addEventListener('submit', function(e) {
         e.preventDefault();
-        const userInput = input.value;
+        let userInput = input.value;
+
+        if (!userInput) {
+          alert("Please select a date and time.");
+          return;
+        }
+
         const dateObj = new Date(userInput);
         const unixTime = dateObj.getTime() / 1000;
 
-        if (!isNaN(unixTime) && unixTime > Date.now() / 1000) {
-          localStorage.setItem('countdownDate', userInput);
-          startCountdown(unixTime);
-        } else {
-          alert("Please choose a valid future date and time.");
+        if (isNaN(unixTime)) {
+          alert("Invalid date format. Please make sure you've selected both date and time.");
+          return;
         }
+
+        if (unixTime <= Date.now() / 1000) {
+          alert("Please choose a future date and time.");
+          return;
+        }
+
+        localStorage.setItem('countdownDate', userInput);
+        startCountdown(unixTime);
       });
 
       resetBtn.addEventListener('click', () => {
