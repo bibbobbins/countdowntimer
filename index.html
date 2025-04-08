@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Launch Date</title>
+  <title>Countdown Timer</title>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
@@ -16,6 +16,7 @@
       margin: 0;
       font-family: 'Poppins', sans-serif;
       background-color: white;
+      color: black;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -24,12 +25,18 @@
       text-align: center;
       padding: 20px;
       box-sizing: border-box;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     h1 {
       font-weight: 600;
       font-size: 2rem;
       margin-bottom: 20px;
+      transition: color 0.3s ease;
+    }
+
+    h2 {
+      transition: color 0.3s ease;
     }
 
     form {
@@ -41,6 +48,7 @@
       font-size: 1rem;
       border: 1px solid #ccc;
       border-radius: 4px;
+      transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease;
     }
 
     button {
@@ -52,6 +60,7 @@
       background-color: #333;
       color: white;
       cursor: pointer;
+      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     #resetBtn {
@@ -59,12 +68,14 @@
       margin-top: 10px;
     }
 
+    /* Keep FlipDown on one line */
     .flipdown {
       display: inline-flex !important;
       flex-wrap: nowrap !important;
       justify-content: center;
       align-items: center;
       transform: scale(0.85);
+      transition: filter 0.3s ease;
     }
 
     .flipdown .rotor-group {
@@ -89,10 +100,33 @@
         font-size: 0.9rem;
       }
     }
+
+    /* Dark mode styles */
+    @media (prefers-color-scheme: dark) {
+      body {
+        background-color: #1e1e1e;
+        color: white;
+      }
+
+      h1, h2 {
+        color: white;
+      }
+
+      input[type="datetime-local"],
+      button {
+        background-color: #333;
+        color: white;
+        border: 1px solid #555;
+      }
+
+      .flipdown {
+        filter: invert(1) hue-rotate(180deg);
+      }
+    }
   </style>
 </head>
 <body>
-  <h1>Your Launch Date</h1>
+  <h1>Launch Date</h1>
 
   <form id="dateForm">
     <input type="datetime-local" id="userDate" placeholder="YYYY-MM-DDTHH:MM" required />
@@ -121,7 +155,7 @@
       flipdown = new FlipDown(unixTime, 'flipdown')
         .start()
         .ifEnded(() => {
-          document.getElementById("flipdown").innerHTML = `<h2>Timer is ended</h2>`;
+          document.getElementById("flipdown").innerHTML = `<h2>Film is released!</h2>`;
         });
     }
 
