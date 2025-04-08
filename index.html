@@ -7,17 +7,28 @@
 
   <!-- Google Fonts -->
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@600&display=swap" rel="stylesheet">
-
-  <!-- FlipDown CSS -->
   <link rel="stylesheet" href="https://unpkg.com/flipdown@0.3.2/dist/flipdown.css" />
 
   <style>
-    /* Base styles - Light Mode by default */
+    :root {
+      --bg-light: white;
+      --text-light: black;
+      --input-bg-light: white;
+      --input-border-light: #ccc;
+      --btn-bg-light: #333;
+      --btn-text-light: white;
+
+      --bg-dark: #1e1e1e;
+      --text-dark: white;
+      --input-bg-dark: #333;
+      --input-border-dark: #555;
+      --btn-bg-dark: #ddd;
+      --btn-text-dark: #000;
+    }
+
     body {
       margin: 0;
       font-family: 'Poppins', sans-serif;
-      background-color: white;
-      color: black;
       display: flex;
       justify-content: center;
       align-items: center;
@@ -29,14 +40,19 @@
       transition: background-color 0.3s ease, color 0.3s ease;
     }
 
+    body.light {
+      background-color: var(--bg-light);
+      color: var(--text-light);
+    }
+
+    body.dark {
+      background-color: var(--bg-dark);
+      color: var(--text-dark);
+    }
+
     h1, h2 {
       font-weight: 600;
       transition: color 0.3s ease;
-    }
-
-    h1 {
-      font-size: 2rem;
-      margin-bottom: 20px;
     }
 
     form {
@@ -46,11 +62,23 @@
     input[type="datetime-local"] {
       padding: 8px;
       font-size: 1rem;
-      border: 1px solid #ccc;
       border-radius: 4px;
-      background-color: white;
-      color: black;
+      border: 1px solid;
       transition: background-color 0.3s ease, color 0.3s ease, border 0.3s ease;
+    }
+
+    body.light input,
+    body.light button {
+      background-color: var(--input-bg-light);
+      color: var(--text-light);
+      border-color: var(--input-border-light);
+    }
+
+    body.dark input,
+    body.dark button {
+      background-color: var(--input-bg-dark);
+      color: var(--text-dark);
+      border-color: var(--input-border-dark);
     }
 
     button {
@@ -59,15 +87,24 @@
       margin-left: 10px;
       border: none;
       border-radius: 4px;
-      background-color: #333;
-      color: white;
       cursor: pointer;
-      transition: background-color 0.3s ease, color 0.3s ease;
     }
 
     #resetBtn {
       display: none;
       margin-top: 10px;
+    }
+
+    #themeToggle {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 0.9rem;
+      background: none;
+      border: none;
+      color: inherit;
+      cursor: pointer;
+      text-decoration: underline;
     }
 
     .flipdown {
@@ -89,6 +126,10 @@
       margin-right: 0;
     }
 
+    body.dark .flipdown {
+      filter: invert(1) hue-rotate(180deg);
+    }
+
     @media (max-width: 500px) {
       .flipdown {
         transform: scale(0.7);
@@ -101,36 +142,14 @@
         font-size: 0.9rem;
       }
     }
-
-    /* Dark mode support only when system prefers it */
-    @media (prefers-color-scheme: dark) {
-      body {
-        background-color: #1e1e1e;
-        color: white;
-      }
-
-      h1, h2 {
-        color: white;
-      }
-
-      input[type="datetime-local"],
-      button {
-        background-color: #333;
-        color: white;
-        border: 1px solid #555;
-      }
-
-      .flipdown {
-        filter: invert(1) hue-rotate(180deg);
-      }
-    }
   </style>
 </head>
 <body>
+  <button id="themeToggle">Toggle Theme</button>
   <h1>Set Your Countdown</h1>
 
   <form id="dateForm">
-    <input type="datetime-local" id="userDate" placeholder="YYYY-MM-DDTHH:MM" required />
+    <input type="datetime-local" id="userDate" required />
     <button type="submit">Start Countdown</button>
   </form>
 
@@ -138,7 +157,6 @@
 
   <div id="flipdown" class="flipdown"></div>
 
-  <!-- FlipDown JS -->
   <script src="https://unpkg.com/flipdown@0.3.2/dist/flipdown.min.js"></script>
 
   <script>
@@ -160,6 +178,30 @@
         });
     }
 
+    // THEME HANDLING
+    const themeToggle = document.getElementById("themeToggle");
+
+    function applyTheme(theme) {
+      document.body.classList.remove("light", "dark");
+      document.body.classList.add(theme);
+      localStorage.setItem("theme", theme);
+    }
+
+    themeToggle.addEventListener("click", () => {
+      const newTheme = document.body.classList.contains("dark") ? "light" : "dark";
+      applyTheme(newTheme);
+    });
+
+    // INIT theme based on localStorage or system
+    const savedTheme = localStorage.getItem("theme");
+    if (savedTheme) {
+      applyTheme(savedTheme);
+    } else {
+      const prefersDark = window.matchMedia("(prefers-color-scheme: dark)").matches;
+      applyTheme(prefersDark ? "dark" : "light");
+    }
+
+    // TIMER LOGIC
     document.addEventListener('DOMContentLoaded', () => {
       const savedDate = localStorage.getItem('countdownDate');
       const form = document.getElementById('dateForm');
